@@ -1,0 +1,1 @@
+$$\sqrt{6}\ \left|3,2\right\rangle_2 \otimes \left|1,0\right\rangle_3 + \sqrt{2}\ \left|3,3\right\rangle_2 \otimes \left|1,-1\right\rangle_3$$
