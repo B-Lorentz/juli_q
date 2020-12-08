@@ -158,13 +158,29 @@ function q_add(a::LinKet, b::PrimitiveKet,c::Number)
             push!(newcoeffs,coeff)   #kigyűjti a coeff-eket
         end
     end
+    #println(newcoeffs, newkets)
     if length(newkets)==0
         return ZeroKet()
     elseif (isfound) #esetleg ez a rész is lefut ha ZeroKet-et kapunk?
-        return LinKet(newcoeffs,a.base_kets)
+        return LinKet(newcoeffs, newkets)
     else
         ans= order(LinKet(vcat(newcoeffs,[c]),vcat(a.base_kets,[b])))
-        return ans
+        return ans#LinKet(vcat(newcoeffs,[c]),vcat(newkets,[b]))
+    end
+end
+
+function _q_add(a::LinKet, b::PrimitiveKet,c::Number)
+    @assert(sameH(a.base_kets[1],b), "Not in same Hilbert space")
+    if length(a.coeffs) == 1
+        if a.base_kets[1] == b
+            return (a.coeffs[1] + c)*b
+        else
+            return order(LinKet(vcat(a.coeffs,[c]),vcat(a.base_kets,[b])))
+        end
+    else
+        if a.base_kets[1] == b
+            return (a.coeffs[1] + c)*b
+        end
     end
 end
 
@@ -172,15 +188,17 @@ Base.:+(a::LinKet, b::PrimitiveKet) = q_add(a,b,1)
 
 Base.:+( b::PrimitiveKet, a::LinKet) = a+b
 Ket = Union{ZeroKet, NonZeroKet}
-Base.:+(a::NonZeroKet,b::Ket) = b
-Base.:+(b::Ket,a::NonZeroKet) = b
+Base.:+(a::ZeroKet,b::NonZeroKet) = b
+Base.:+(b::NonZeroKet,a::ZeroKet) = b
 Base.:+(a::ZeroKet, b::ZeroKet) = a
 
 function Base.:+(a::LinKet, b::LinKet)
    @assert(sameH(a.base_kets[1], b.base_kets[1]), "Not in same Hilbert space")
    ans=a
    for ipair in zip(b.coeffs,b.base_kets)
+       #println("bfore:" , ans)
        ans=q_add(ans,ipair[2],ipair[1])
+       #println("after:", ans)
    end
    return ans
 end

@@ -23,6 +23,8 @@ check_eq(-3*(a_⊗c_), a_⊗(-3*c_))
 check_eq(apply_op(jK(1, -1, 0), _J_d), ZeroKet())
 
 # TODO: Ez nem fut le, de nem az assert, hanem valami üreslista-kezelés miatt az összedásban
-#check_eq(apply_op(jK(1/2, 1/2, 0)⊗jK(1, 0, 1), _J_d),
-#jK(1/2, -1/2, 0)⊗jK(1, 0, 1) + sqrt(AlgebraicNumber(2))*(jK(1/2, 1/2, 0)⊗jK(1,-1, 1)))
-check_eq(a_ + b_, a_ + b_)
+check_eq(apply_op(jK(1/2, 1/2, 0)⊗jK(1, 0, 1), _J_d),
+jK(1/2, -1/2, 0)⊗jK(1, 0, 1) + sqrt(AlgebraicNumber(2))*(jK(1/2, 1/2, 0)⊗jK(1,-1, 1)))
+
+check_eq(b_ + a_ , a_ + b_)
+#println(b_ + ((-1)*(a_) + 1*a_))
