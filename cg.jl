@@ -2,14 +2,36 @@ include("q_algebra.jl")
 #J_d_coeff
 #J_u_coeff
 using Memoize
-function CG(a::EigenKet, b::EigenKet, c::EigenKet)
+symRat(x::Rational) = string(" S(",x.num, ")/S(", x.den, ") ")
+ket2arg(k::EigenKet) = string( symRat(k.j), ", ", symRat(k.m))
+
+function pyCG(cg, a, b, c, io, logstr)
+
+    println(io, "checky(", round(real(AlgebraicNumber(cg).apprx), digits=9),
+     ", CG( ",ket2arg(a), ", ",
+            ket2arg(b), ", ",
+            ket2arg(c), ").doit().evalf(),'", logstr ,"')")
+end
+function pyprep(io::IO)
+    println(io, "from sympy import *")
+    println(io, "from sympy.physics.quantum.spin import CG")
+    println(io, "import numpy as np")
+    println(io, "def checky(a, b, log):")
+    println(io, "   if not (np.allclose(a, float(b)) ):")
+    println(io, "       print(f'{a:.6f}', f'{float(b):.6f}', log)")
+end
+@memoize function CG(a::EigenKet, b::EigenKet, c::EigenKet, io::IO)
     J = c.j
     M = c.m
+    cg = 0
+    logstr = ""
     if ((a.m + b.m) != M) | (J>a.j + b.j) | (J<abs(a.j - b.j))
-        return 0
+        cg = 0
+        logstr = string(logstr,"0 brach")
     elseif (J == M)
         m1s, m2s, cs = JJlist(J, a.j, b.j)
-        return cs[m1s .== a.m][1]
+        cg = cs[m1s .== a.m][1]
+            logstr = string(logstr,"JJ brach")
     else
         _M = M+1
         kl = jK(J, _M, 0)
@@ -19,20 +41,36 @@ function CG(a::EigenKet, b::EigenKet, c::EigenKet)
         try
             k1 = jK(a.j, a.m+1, 0)
             c_r1 = J_d_coeff(k1)
-            sum += c_r1*CG(k1, b, kl)
-        catch DomainError
+            c1 = CG(k1, b, kl)
+            sum += c_r1*c1
+        catch e
+            if isa(e, DomainError)
+                logstr = string(logstr, " de ", a.j," ", a.m+1)
+            else
+                println(typeof(c_r1), typeof(c1))
+                throw(e)
+           end
         end
         try
             k2 = jK(b.j, b.m+1, 0)
             c_r2 = J_d_coeff(k2)
-            sum += c_r2*CG(a, k2, kl)
-        catch DomainError
-        end
-        return sum/c_l
+            sum += c_r2*CG(a, k2, kl, io)
+        catch e
+            if isa(e, DomainError)
+                logstr = string(logstr, " de ", a.j," ", a.m+1)
+            elseif isa(e, MethodError)
+                throw(e)
+            end
+       end
+        cg = sum/c_l
+        logstr = string(logstr, " main branch")
+
     end
+    pyCG(cg, a, b, c, io, logstr)
+    cg
 end
 
-function JJlist(J::Rational, j1::Rational, j2::Rational)    #
+@memoize function JJlist(J::Rational, j1::Rational, j2::Rational)    #
     @assert((J <= j1 + j2) & ( J >= abs(j1 - j2)), string("J= ", J, " j1 =" ,j1, "j2 = ", j2, " are nonsense"))
     @assert(ishalf(j1), "j1 spin must be half-integer" )
     @assert(ishalf(j2), "j2 spin must be half-integer")
@@ -74,28 +112,22 @@ function randomkets(maxj::Number)
     c=jK(J,M,0)
     return (a,b,c)
 end
-
-symRat(x::Rational) = string(" S(",x.num, ")/S(", x.den, ") ")
-ket2arg(k::EigenKet) = string( symRat(k.j), ", ", symRat(k.m))
-
-
 function pythoncheck(N::Integer, fname::String)
     io = open(fname, "w")
-    println(io, "from sympy import *")
-    println(io, "from sympy.physics.quantum.spin import CG")
-    println(io, "import numpy as np")
-    println(io, "def checky(a, b):")
-    println(io, "    print(a, float(b), np.allclose(a, float(b)) )")
+    pyprep(io)
+
     for _ in 0:N
+        println(io, "print('____________________________________')")
         kets = randomkets(5)
-        cg = CG(kets...)
-        println(io, "checky(", round(real(AlgebraicNumber(cg).apprx), digits=9),
-         ", CG( ",ket2arg(kets[1]), ", ",
-                ket2arg(kets[2]), ", ",
-                ket2arg(kets[3]), ").doit().evalf())")
+        cg = CG(kets..., io)
+        #pyCG(cg, kets..., io)
     end
     close(io)
 end
-#pythoncheck(30,"check.py")
-println(CG( jK(9//2 , 3//2, 0) , jK(7//2 ,  -5//2, 0) ,  jK(3//1 ,  -1//1, 0)) )
+pythoncheck(30,"check.py")
+#println(jK(5//2, 5//2, 0))
+#io = open( "check.py", "w")
+#pyprep(io)
+#println(CG( jK(9//2 , 3//2, 0) , jK(7//2 ,  -5//2, 0) ,  jK(3//1 ,  -1//1, 0), io) )
+#close(io)
 #println(randomkets(5))
