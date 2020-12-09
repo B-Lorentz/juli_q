@@ -1,6 +1,7 @@
 include("q_algebra.jl")
 #J_d_coeff
 #J_u_coeff
+using Memoize
 function CG(a::EigenKet, b::EigenKet, c::EigenKet)
     J = c.j
     M = c.m
@@ -10,15 +11,11 @@ function CG(a::EigenKet, b::EigenKet, c::EigenKet)
         m1s, m2s, cs = JJlist(J, a.j, b.j)
         return cs[m1s .== a.m][1]
     else
-
         _M = M+1
-
         kl = jK(J, _M, 0)
         c_l = J_d_coeff(kl)
 
         sum = 0
-
-
         try
             k1 = jK(a.j, a.m+1, 0)
             c_r1 = J_d_coeff(k1)
@@ -64,31 +61,41 @@ function JJlist(J::Rational, j1::Rational, j2::Rational)    #
 
 end
 
-function randomkets(maxj::Number)::(EigenKet, EigenKet, EigenKet)
-    J=rand(0,2*maxj)//2
-    diff=rand(1,10)
-    j1=rand(0,2*maxj)//2
-    println(j1)
-    m1=(-j1:j1)[rand(1,2*j1+1)]
-    j2=J+diff-j1
-    m2=(-j2:j2)[rand(1,2*j2+1)]
+function randomkets(maxj::Number)
+
+    j1=rand(0:(2*maxj))//2
+    m1=rand(-j1:j1)
+    j2=rand(0:(2*maxj))//2
+    m2=rand(-j2:j2)
     M=m1+m2
+    J = rand(abs(M):(j1+j2))
     a=jK(j1,m1,0)
     b=jK(j2,m2,0)
     c=jK(J,M,0)
     return (a,b,c)
 end
 
+symRat(x::Rational) = string(" S(",x.num, ")/S(", x.den, ") ")
+ket2arg(k::EigenKet) = string( symRat(k.j), ", ", symRat(k.m))
+
+
 function pythoncheck(N::Integer, fname::String)
     io = open(fname, "w")
     println(io, "from sympy import *")
     println(io, "from sympy.physics.quantum.spin import CG")
-    println()
+    println(io, "import numpy as np")
+    println(io, "def checky(a, b):")
+    println(io, "    print(a, float(b), np.allclose(a, float(b)) )")
     for _ in 0:N
-        kets = randomkets(10)
+        kets = randomkets(5)
         cg = CG(kets...)
-        println(io, cg)
+        println(io, "checky(", round(real(AlgebraicNumber(cg).apprx), digits=9),
+         ", CG( ",ket2arg(kets[1]), ", ",
+                ket2arg(kets[2]), ", ",
+                ket2arg(kets[3]), ").doit().evalf())")
     end
     close(io)
 end
-pythoncheck(5,"check.py")
+#pythoncheck(30,"check.py")
+println(CG( jK(9//2 , 3//2, 0) , jK(7//2 ,  -5//2, 0) ,  jK(3//1 ,  -1//1, 0)) )
+#println(randomkets(5))
