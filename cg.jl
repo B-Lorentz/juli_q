@@ -16,9 +16,27 @@ function pyprep(io::IO)
     println(io, "from sympy import *")
     println(io, "from sympy.physics.quantum.spin import CG")
     println(io, "import numpy as np")
+    println(io, "allok = True")
     println(io, "def checky(a, b, log):")
-    println(io, "   if not (np.allclose(a, float(b)) ):")
-    println(io, "       print(f'{a:.6f}', f'{float(b):.6f}', log)")
+    println(io, "   good = np.allclose(a, float(b))")
+    println(io, "   global allok")
+    println(io, "   if not good:")
+    println(io, "       allok = False")
+    println(io, "       print(f'{a:.6f}', f'{float(b):.6f}', good, log)")
+end
+
+function contrib(a::EigenKet, logstr)
+    k1 = 0
+    try
+        k1 = jK(a.j, a.m+1, 0)
+    catch e
+        logstr = string(logstr, " de ", a.j," ", a.m+1)
+        return 0, 0, logstr
+    end
+    c_r1 = J_d_coeff(k1)
+
+    return c_r1, k1, logstr
+
 end
 @memoize function CG(a::EigenKet, b::EigenKet, c::EigenKet, io::IO)
     J = c.j
@@ -37,32 +55,16 @@ end
         kl = jK(J, _M, 0)
         c_l = J_d_coeff(kl)
 
-        sum = 0
-        try
-            k1 = jK(a.j, a.m+1, 0)
-            c_r1 = J_d_coeff(k1)
-            c1 = CG(k1, b, kl)
-            sum += c_r1*c1
-        catch e
-            if isa(e, DomainError)
-                logstr = string(logstr, " de ", a.j," ", a.m+1)
-            else
-                println(typeof(c_r1), typeof(c1))
-                throw(e)
-           end
+        c_r1, k1, logstr = contrib(a, logstr)
+        c_r2, k2, logstr = contrib(b, logstr)
+        c1, c2 = 0, 0
+        if isa(k1, EigenKet)
+            c1 = CG(k1, b, kl, io)
         end
-        try
-            k2 = jK(b.j, b.m+1, 0)
-            c_r2 = J_d_coeff(k2)
-            sum += c_r2*CG(a, k2, kl, io)
-        catch e
-            if isa(e, DomainError)
-                logstr = string(logstr, " de ", a.j," ", a.m+1)
-            elseif isa(e, MethodError)
-                throw(e)
-            end
-       end
-        cg = sum/c_l
+        if isa(k2, EigenKet)
+            c2 = CG(a, k2, kl, io)
+        end
+        cg = (c1*c_r1 + c2*c_r2)/c_l
         logstr = string(logstr, " main branch")
 
     end
@@ -118,13 +120,14 @@ function pythoncheck(N::Integer, fname::String)
 
     for _ in 0:N
         println(io, "print('____________________________________')")
-        kets = randomkets(5)
+        kets = randomkets(10)
         cg = CG(kets..., io)
         #pyCG(cg, kets..., io)
     end
+    println(io, "print('All tests passed: ' , allok)")
     close(io)
 end
-pythoncheck(30,"check.py")
+pythoncheck(100,"check.py")
 #println(jK(5//2, 5//2, 0))
 #io = open( "check.py", "w")
 #pyprep(io)
