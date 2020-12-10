@@ -99,10 +99,11 @@ end
 
 NonZeroKet = Union{PrimitiveKet,LinKet}
 
+alg2f(x::AlgebraicNumber) = convert(Float64,real(x.apprx))
 function Base.show(io::IO, a::LinKet)
-    print(io, " ", a.coeffs[1],"(", a.base_kets[1], ")")
+    print(io, " ", alg2f(a.coeffs[1]),"(", a.base_kets[1], ")")
     for cket in zip(a.coeffs[2:end], a.base_kets[2:end])
-        print(io, " + ", cket[1], "(", cket[2], ") ")
+        print(io, " + ", alg2f(cket[1]), "(", cket[2], ") ")
     end
     println()
 end
@@ -267,8 +268,8 @@ function ⊗(a::EigenKet,b::EigenKet)
     ProductKet([a,b])
 end
 
-⊗(a::ZeroKet, b::Ket) = b
-⊗(a::Ket, b::ZeroKet) = a
+⊗(a::ZeroKet, b::Ket) = a
+⊗(a::Ket, b::ZeroKet) = b
 
 
 function ⊗(a::ProductKet, b::EigenKet)

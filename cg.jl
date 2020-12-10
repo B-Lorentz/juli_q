@@ -7,12 +7,12 @@ ket2arg(k::EigenKet) = string( symRat(k.j), ", ", symRat(k.m))
 
 function pyCG(cg, a, b, c, io, logstr)
 
-    println(io, "checky(", round(real(AlgebraicNumber(cg).apprx), digits=9),
+    println(io, "checky(", alg2f(AlgebraicNumber(cg)),
      ", CG( ",ket2arg(a), ", ",
             ket2arg(b), ", ",
             ket2arg(c), ").doit().evalf(),'", logstr ,"')")
 end
-function pyprep(io::IO)
+function pyprep(io::IO, verbose=false::Bool)
     println(io, "from sympy import *")
     println(io, "from sympy.physics.quantum.spin import CG")
     println(io, "import numpy as np")
@@ -22,7 +22,11 @@ function pyprep(io::IO)
     println(io, "   global allok")
     println(io, "   if not good:")
     println(io, "       allok = False")
-    println(io, "       print(f'{a:.6f}', f'{float(b):.6f}', good, log)")
+    if verbose
+        println(io, "   print(f'{a:.6f}', f'{float(b):.6f}', good, log)")
+    else
+        println(io, "       print(f'{a:.6f}', f'{float(b):.6f}', good, log)")
+    end
 end
 
 function contrib(a::EigenKet, logstr)
@@ -38,7 +42,7 @@ function contrib(a::EigenKet, logstr)
     return c_r1, k1, logstr
 
 end
-@memoize function CG(a::EigenKet, b::EigenKet, c::EigenKet, io::IO)
+@memoize function CG(a::EigenKet, b::EigenKet, c::EigenKet, io=nothing)
     J = c.j
     M = c.m
     cg = 0
@@ -68,7 +72,9 @@ end
         logstr = string(logstr, " main branch")
 
     end
-    pyCG(cg, a, b, c, io, logstr)
+    if ~(io == nothing)
+        pyCG(cg, a, b, c, io, logstr)
+    end
     cg
 end
 
@@ -120,14 +126,14 @@ function pythoncheck(N::Integer, fname::String)
 
     for _ in 0:N
         println(io, "print('____________________________________')")
-        kets = randomkets(10)
+        kets = randomkets(15)
         cg = CG(kets..., io)
         #pyCG(cg, kets..., io)
     end
     println(io, "print('All tests passed: ' , allok)")
     close(io)
 end
-pythoncheck(100,"check.py")
+#pythoncheck(100,"check.py")
 #println(jK(5//2, 5//2, 0))
 #io = open( "check.py", "w")
 #pyprep(io)
