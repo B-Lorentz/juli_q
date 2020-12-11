@@ -1,12 +1,12 @@
 include("q_algebra.jl")
 include("cg.jl")
 using Memoize
-@memoize function JJdecomp(j1::Rational, j2::Rational, J::Rational)
+@memoize function JJdecomp(j1::Rational, j2::Rational, J::Rational, hi1=0::Integer, hi2=1::Integer)
     m1s, m2s, coeffs = JJlist(J, j1, j2)
     res = ZeroKet()
     for m1m2coe in zip(m1s, m2s, coeffs)
         m1, m2, coe =  m1m2coe
-        res += coe*jK(j1, m1, 0)⊗jK(j2, m2, 1)
+        res += coe*jK(j1, m1, hi1)⊗jK(j2, m2, hi2)
     end
     res
 end
@@ -27,13 +27,13 @@ function Base.:*(b::PrimitiveBra, k::PrimitiveKet)
 end
 Base.:*(b::PrimitiveBra, k::LinKet) = sum(k.coeffs .* ( [b] .* k.base_kets))
 
-@memoize function decompose(j1::Rational, j2::Rational, J::Rational, M::Rational)
+@memoize function decompose(j1::Rational, j2::Rational, J::Rational, M::Rational, hi1=0::Integer, hi2=1::Integer)
     if J == M
-        return JJdecomp(j1, j2, J)
+        return JJdecomp(j1, j2, J, hi1, hi2)
     else
         uket = jK(J, M+1, 0)
         left = apply_op(uket, _J_d)
-        dec = decompose(j1, j2, J, M+1)
+        dec = decompose(j1, j2, J, M+1, hi1, hi2)
         right = apply_op(dec, _J_d)
 
         return (1/(dag(jK(J, M, 0))*left))*right
@@ -53,20 +53,36 @@ function check_decomposition(j1::Rational, j2::Rational, J::Rational, M::Rationa
     close(io)
 end
 
+full_prob(k::LinKet) = sum(k.coeffs .^2)
+
 function full_decompose(js, J::Rational, M::Rational)
     if length(js) == 2
-        return decompose(js[1], js[2], J, M)
+        return decompose(js[1], js[2], J, M, 0, 1)
     else
         jrems = (J-js[end]):(J+js[end])
+        result = ZeroKet()
         for jrem in jrems
-            println(jrem)
-            deco = full_decompose(js[1:end-1], jrem, M)
-            println(deco)
+
+            bin = decompose(jrem, js[end], J,M, 0, length(js)-1)
+            println(full_prob(bin))
+            for c_k = zip(bin.coeffs, bin.base_kets)
+                c, k = c_k
+                try
+                    deco = full_decompose(js[1:end-1], k.parts[1].j, k.parts[1].m)
+
+                    result = result + c*(deco⊗k.parts[2])
+                catch err
+                    if ~isa(err, AssertionError)
+                        throw(err)
+                    end
+                end
+            end
+            println()
         end
-        return 420
+        return result
     end
 end
-println(full_decompose([1//1, 2//1, 1//1], 3//1, 2//1 ))
+println(full_prob(full_decompose([1//1, 2//1, 1//1], 3//1, 2//1 )))
 #check_decomposition(8 + 5//2, 3//2, 8//1, 8//1, "de_check.py")
 #println(apply_op(jK(5, 4, 0)⊗jK(3//2, -1//2, 1), _J_d))
 #println(apply_op(jK(5, 5, 0)⊗jK(3//2, -3//2, 1), _J_d))
