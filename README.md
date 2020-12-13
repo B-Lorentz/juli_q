@@ -6,15 +6,8 @@ Bódy Lőrinc és Hajnal Dániel
 
 1. juli_q letöltése: `git clone https://github.com/B-Lorentz/juli_q.git`
 
-2. AlgebraicNumbers installálása: terminálból lépjünk be a juli_q mappába, ahol `git clone https://github.com/anj1/AlgebraicNumbers.jl`
-
-* juliából pkg módban (ez a "]" gomb megnyomásával elérhető) kell a következő parancsot futtatni:
-
-`add [path]/AlgebraicNumbers.jl`
-
+2. AlgebraicNumbers installálása: terminálból lépjünk be a juli_q mappába, ahol `git clone https://github.com/anj1/AlgebraicNumbers.jl`, ezután juliából pkg módban (ez a "]" gomb megnyomásával elérhető) kell a következő parancsot futtatni: `add [path]/AlgebraicNumbers.jl`
 ahol [path] az abszolút elérési útvonala az AlegbraicNumbers.jl-nek.
-
-Ez letölti az AlgebraicNumbers csomagot.
 
 3. Egyéb csomagok, szintén pkg módban kell telepíteni:
 
@@ -24,13 +17,18 @@ Ez letölti az AlgebraicNumbers csomagot.
 
 ## Használat:
 
-A `scripts` mappában
+A `scripts` mappában vannak parancssorból futtatható verziók. Az törteket racionáli alakban (pl.: `-3/2`) lehet beírni.
 
 ### Közvetlen lekérdezése egy CG-együtthatónak
 
+`$ julia CG_calc.jl J M j1 m1 j2 m2`
 
+Kiírja a megfelelő CG együthatót a rekurzió szerint.
 
-## Rekurzív algoritmus egy J,M állapot j1 és j2-re bontására: decompose.jl
+ellenőrzés:
+` julia CG_test.jl N pythonfile.py`
+
+### Rekurzív algoritmus egy J,M állapot j1 és j2-re bontására
 
 szignatúra: julia decompose.jl J M j1 j2 filename.md
 kiírja a képernyőre a dekompozíciót a megfelelő együtthatókkal, a filename.md-be pedig egy olvashatóbb Markdown kód formájában kimenti
