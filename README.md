@@ -48,6 +48,4 @@ Markdownként menti külön egyre normálva a különféle $J_{12}$ résszössze
 
 ## 2.1. Mi lehet a három komponensű rendszer teljes impulzusmomentuma?
 
-Két komponensű rendszer teljes impulzusmomentuma
-
-$J_{12}$
+A 2_1.pdf nevű fájlban levezettük.
