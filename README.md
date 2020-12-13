@@ -45,3 +45,7 @@ ellenőrzés:
 Markdownként menti külön egyre normálva a különféle $J_{12}$ résszösszegeket feltételező eseteket.
 
 (példakiement `output/3d_test.md`)
+
+## 2.1. Mi lehet a három komponensű rendszer teljes impulzusmomentuma?
+
+A 2_1.pdf nevű fájlban levezettük.
