@@ -46,6 +46,14 @@ Markdownként menti külön egyre normálva a különféle $J_{12}$ résszössze
 
 (példakiement `output/3d_test.md`)
 
+### Tetszőlegesen sok adott állapot összeadása
+`$ julia couple filename.txt j1 m1 j2 m2 j3 m3 ...`
+
+A file-ba írja a felbontást markdownban, és az ekvivalens dolgot pythonban `sympy.physics.quantum.spin.couple` használatával (példakiement `output/couple.txt`), így ha ezeket bemásoljuk egy jupyter notebook markdown és python cellájába, könnyen összevethetőek.
+
+### J és M felbontása sok j-n
+`$ julia full_couple filename.txt J M j1 j2 j3 j4 ...`
+ Markdown kimenet produkál, különválasztva részösszegek szerint, számbavéve minden olyan m-et, ami belejátszhat.
 ## 2.1. Mi lehet a három komponensű rendszer teljes impulzusmomentuma?
 
 A 2_1.pdf nevű fájlban levezettük.
