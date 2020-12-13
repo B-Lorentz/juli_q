@@ -5,9 +5,9 @@ Bódy Lőrinc és Hajnal Dániel
 
 ## Telepítés:
 
-1. juli_q letöltése: `git clone https://github.com/B-Lorentz/juli_q.git`
+1. juli_q letöltése: `$ git clone https://github.com/B-Lorentz/juli_q.git`
 
-2. AlgebraicNumbers installálása: terminálból lépjünk be a juli_q mappába, ahol `git clone https://github.com/Snowgun/AlgebraicNumbers.jl.git`, ezután juliából pkg módban (ez a "]" gomb megnyomásával elérhető) kell a következő parancsot futtatni: `add [path]/AlgebraicNumbers.jl`
+2. AlgebraicNumbers installálása: terminálból lépjünk be a juli_q mappába, ahol `$ git clone https://github.com/Snowgun/AlgebraicNumbers.jl.git` -t futtassuk, ezután juliából pkg módban (ez a "]" gomb megnyomásával elérhető) kell a következő parancsot futtatni: `add [path]/AlgebraicNumbers.jl`
 ahol [path] az abszolút elérési útvonala az AlegbraicNumbers.jl-nek. (ezt nem mi írtuk, csak hiányzott belőle egy ún. projektfile, és ezt hozzáadtuk)
 
 3. Egyéb csomagok, szintén pkg módban kell telepíteni: `add Memoize`
