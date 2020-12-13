@@ -2,13 +2,9 @@ Kvantummechanika-A projektfeladat
 Clebsch-Gordan együtthatók generálása
 Bódy Lőrinc és Hajnal Dániel
 
-# Telepítés:
+## Telepítés:
 
--juli_q letöltése:
-
-terminálból a következő parancsot kell futtatni, a célmappából:
-
-git clone https://github.com/B-Lorentz/juli_q.git
+1. juli_q letöltése: `git clone https://github.com/B-Lorentz/juli_q.git`
 
 -AlgebraicNumbers installálása:
 
