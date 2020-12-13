@@ -55,37 +55,33 @@ end
 
 full_prob(k::LinKet) = sum(alg2f.( k.coeffs) .^2)
 
-function full_decompose(js, J::Rational, M::Rational)
-    if length(js) == 2
-        return decompose(js[1], js[2], J, M, 0, 1)
-    else
-        jrems = (abs(J-js[end])):(J+js[end])
-        results = ZeroKet()
-        sum = 0
-        for jrem in reverse(jrems)
-            result = ZeroKet()
-            bin = decompose(jrem, js[end], J,M, 0, length(js)-1)
-        #    println(full_prob(bin))
-            for c_k = zip(bin.coeffs, bin.base_kets)
-                c, k = c_k
-                try
-                    deco = full_decompose(js[1:end-1], k.parts[1].j, k.parts[1].m)
+function three_decompose(js, J::Rational, M::Rational)
 
-                    result = result + c*(deco⊗k.parts[2])
-                catch err
-                    if ~isa(err, AssertionError)
-                        throw(err)
-                    end
+    jrems = (abs(J-js[end])):(J+js[end])
+    results = []
+
+    for jrem in reverse(jrems)
+        result = ZeroKet()
+        bin = decompose(jrem, js[end], J,M, 0, length(js)-1)
+        #    println(full_prob(bin))
+        for c_k = zip(bin.coeffs, bin.base_kets)
+            c, k = c_k
+            try
+            #    deco = full_decompose()
+                deco = decompose(js[1], js[2], k.parts[1].j, k.parts[1].m)
+
+                result = result + c*(deco⊗k.parts[2])
+            catch err
+                if ~isa(err, AssertionError)
+                    throw(err)
                 end
             end
-        #    println()
-            results += result
-            if result != ZeroKet()
-                return result
-            end
         end
-    #    return (1/sqrt(AlgebraicNumber(sum)))*results
+        #    println()
+        push!(results, (result, jrem))
+
     end
+    results
 end
 
 function all_Js(js)
@@ -127,9 +123,9 @@ function great_check2(js)
 end
 
 #println(great_check([1//1, 1//1,1//1]))
-res = full_decompose( [1//1, 1//1, 1//1], 1//1, 1//1 )
-println(res)
-println(full_prob(res))
+#res = three_decompose( [1//1, 1//1, 1//1], 1//1, 1//1 )
+#println(res)
+#println(full_prob(res))
 #println(decompose(2//1, 1//1, 2//1, 2//1))
 #println(JJdecomp(1//1, 1//1, 0//1))
 #println(all_Js([3, 13, 5]))

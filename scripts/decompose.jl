@@ -1,0 +1,13 @@
+include("ratp.jl")
+include("../src/cg_unlimited.jl")
+include("../src/q_algebra.jl")
+J=ratparse(ARGS[1])
+M=ratparse(ARGS[2])
+j1=ratparse(ARGS[3])
+j2=ratparse(ARGS[4])
+
+dec = decompose(j1, j2, J, M)
+println(dec)
+io = open(ARGS[5], "w")
+println(io, "\$\$", lpp(jK(J, M, 2)), " = ",lpp(dec),"\$\$")
+close(io)

@@ -1,0 +1,1 @@
+$$\left|3,3\right\rangle_2 = -\sqrt{\frac{7}{15}}\ \left|2,-1\right\rangle_0 \otimes \left|4,4\right\rangle_1 + \sqrt{\frac{7}{20}}\ \left|2,0\right\rangle_0 \otimes \left|4,3\right\rangle_1 + -\sqrt{\frac{3}{20}}\ \left|2,1\right\rangle_0 \otimes \left|4,2\right\rangle_1 + \sqrt{\frac{1}{30}}\ \left|2,2\right\rangle_0 \otimes \left|4,1\right\rangle_1$$

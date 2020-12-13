@@ -1,0 +1,11 @@
+include("../src/cg.jl")
+include("ratp.jl")
+J=ratparse(ARGS[1])
+M=ratparse(ARGS[2])
+j1=ratparse(ARGS[3])
+j2=ratparse(ARGS[5])
+
+C = jK(J, M, 0)
+a = jK(j1, ratparse(ARGS[4]), 1)
+b = jK(j2, ratparse(ARGS[6]), 2)
+println(alg2f(AlgebraicNumber(CG(a, b, C))))
