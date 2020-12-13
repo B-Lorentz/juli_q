@@ -10,13 +10,11 @@ Bódy Lőrinc és Hajnal Dániel
 2. AlgebraicNumbers installálása: terminálból lépjünk be a juli_q mappába, ahol `git clone https://github.com/Snowgun/AlgebraicNumbers.jl.git`, ezután juliából pkg módban (ez a "]" gomb megnyomásával elérhető) kell a következő parancsot futtatni: `add [path]/AlgebraicNumbers.jl`
 ahol [path] az abszolút elérési útvonala az AlegbraicNumbers.jl-nek. (ezt nem mi írtuk, csak hiányzott belőle egy ún. projektfile, és ezt hozzáadtuk)
 
-3. Egyéb csomagok, szintén pkg módban kell telepíteni:
-
-`add Memoize`
+3. Egyéb csomagok, szintén pkg módban kell telepíteni: `add Memoize`
 
 ## Használat:
 
-A `scripts` mappában vannak parancssorból futtatható verziók. Az törteket racionáli alakban (pl.: `-3/2`) lehet beírni.
+A `scripts` mappában vannak parancssorból futtatható verziók. Az törteket racionális alakban (pl.: `-3/2`) lehet beírni.
 
 ### Közvetlen lekérdezése egy CG-együtthatónak
 
@@ -25,22 +23,25 @@ A `scripts` mappában vannak parancssorból futtatható verziók. Az törteket r
 Kiírja a megfelelő CG együthatót a rekurzió szerint.
 
 ellenőrzés:
-` julia CG_test.jl N pythonfile.py`
+`$ julia CG_test.jl N pythonfile.py`
 
 N különböző (J M j1 m1 j2 m2) 6-ost generál, kiszámítja a megfelelő CG-együtthatókat, és egy python file-t csinál, amely az eredményt összeveti a `sympy` csomag `sympy.physics.quantum.spin.CG` függvényének kimenetével, amely lényegében egy CG-táblázat.
 
-Ezután a python file-t futtatva elvégződik az összehasonlítás
+Ezután a python file-t futtatva elvégződik az összehasonlítás (példakiement `output/cgtest.py`)
 
 ### Rekurzív algoritmus egy J,M állapot j1 és j2-re bontására
 
-`julia decompose.jl J M j1 j2 filename.md`
+`$ julia decompose.jl J M j1 j2 filename.md`
 
-kiírja a képernyőre a dekompozíciót a megfelelő együtthatókkal, a filename.md-be pedig egy olvashatóbb Markdown kód formájában kimenti
+kiírja a képernyőre a dekompozíciót a megfelelő együtthatókkal, a filename.md-be pedig egy olvashatóbb Markdown kód formájában kimenti. (példakiement `output/dec.md`)
 
 ellenőrzés: 
-`julia decompose_test.jl J M j1 j2 pythonfile.py`
+`$ julia decompose_test.jl J M j1 j2 pythonfile.py`
+(példakiement `output/dec_test.py`)
 
 ### J, M állapot 3 alrendszerre bontása:
+`$ julia three_decompose.jl J M j1 j2 j3 filename.py`
 
-szignatúra: julia three_decompose.jl J M j1 j2 j3 filename.py
 Markdownként menti külön egyre normálva a különféle $J_{12}$ résszösszegeket feltételező eseteket.
+
+(példakiement `output/3d_test.md`)
