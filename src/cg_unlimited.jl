@@ -185,10 +185,10 @@ function print_decomposition(io, ket, subjs, coeffs)
     pp_coup(io, subjs[1], coeffs[1], M)
     for jc = zip(subjs[2:end], coeffs[2:end])
         js, c = jc
-        print( " + ")
+        print(io, " + ")
         pp_coup(io, js, c, M)
     end
-    println("\$\$")
+    println(io, "\$\$")
 end
 
 function py_dectest(io::IO, ket::ProductKet)
@@ -202,13 +202,13 @@ function py_dectest(io::IO, ket::ProductKet)
     print(io, "))")
 end
 
-ket, subjs, coeffs = forward([1, 2, 1//2, 2], [1, 1, 1//2, -1])
-println(ket)
-println(subjs)
-println(coeffs)
-println(sum(coeffs .^ 2))
-print_decomposition(stdout, ket, subjs, coeffs)
-py_dectest(stdout, ket)
+#ket, subjs, coeffs = forward([1, 2, 1//2, 2], [1, 1, 1//2, -1])
+#println(ket)
+#println(subjs)
+#println(coeffs)
+#println(sum(coeffs .^ 2))
+#print_decomposition(stdout, ket, subjs, coeffs)
+#py_dectest(stdout, ket)
 #println(great_check([1//1, 1//1,1//1]))
 #res = three_decompose( [1//1, 1//1, 1//1], 1//1, 1//1 )
 #println(res)
