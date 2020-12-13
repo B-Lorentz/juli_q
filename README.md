@@ -50,4 +50,4 @@ Markdownként menti külön egyre normálva a különféle $J_{12}$ résszössze
 
 Két komponensű rendszer teljes impulzusmomentuma
 
-J_{12}
+$$J_{12}$$
