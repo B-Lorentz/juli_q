@@ -56,7 +56,7 @@ end
 full_prob(k::LinKet) = sum(alg2f.( k.coeffs) .^2)
 
 function three_decompose(js, J::Rational, M::Rational)
-
+    @assert(J in all_Js(js), string("J = ",J," can not be decomposed to js: ", js))
     jrems = (abs(J-js[end])):(J+js[end])
     results = []
 
@@ -78,8 +78,9 @@ function three_decompose(js, J::Rational, M::Rational)
             end
         end
         #    println()
-        push!(results, (result, jrem))
-
+        if ~(result == ZeroKet())
+            push!(results, (result, jrem))
+        end
     end
     results
 end
