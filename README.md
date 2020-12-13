@@ -6,31 +6,29 @@ Bódy Lőrinc és Hajnal Dániel
 
 1. juli_q letöltése: `git clone https://github.com/B-Lorentz/juli_q.git`
 
--AlgebraicNumbers installálása:
+2. AlgebraicNumbers installálása: terminálból lépjünk be a juli_q mappába, ahol `git clone https://github.com/anj1/AlgebraicNumbers.jl`
 
-terminálból lépjünk be a juli_q mappába, majd futtassuk a következő parancsot:
+* juliából pkg módban (ez a "]" gomb megnyomásával elérhető) kell a következő parancsot futtatni:
 
-git clone https://github.com/anj1/AlgebraicNumbers.jl
+`add [path]/AlgebraicNumbers.jl`
 
-juliából pkg módban (ez a "]" gomb megnyomásával elérhető) kell a következő parancsot futtatni:
-
-add [path]/AlgebraicNumbers.jl
-
-ahol [path] az abszolút elérési útvonala az AlegbraicNumbers.jl-nek (ezt a pwd futtatásával lehet megkapni)
+ahol [path] az abszolút elérési útvonala az AlegbraicNumbers.jl-nek.
 
 Ez letölti az AlgebraicNumbers csomagot.
-(az eredeti régebbi, és nincs benne project file, ehhez hozzátettük)
 
--Egyéb csomagok, szintén pkg módban kell telepíteni:
+3. Egyéb csomagok, szintén pkg módban kell telepíteni:
 
-add PolynomialRoots
-add Nemo
-add Memoize
+`add PolynomialRoots`
+`add Nemo`
+`add Memoize`
+
+## Használat:
+
+A `scripts` mappában
+
+### Közvetlen lekérdezése egy CG-együtthatónak
 
 
-
-
-# Használat:
 
 ## Rekurzív algoritmus egy J,M állapot j1 és j2-re bontására: decompose.jl
 
